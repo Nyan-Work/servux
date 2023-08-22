@@ -9,8 +9,11 @@ import java.util.UUID;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -22,8 +25,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.gen.structure.Structure;
-import fi.dy.masa.servux.network.IPluginChannelHandler;
-import fi.dy.masa.servux.network.PacketSplitter;
 import fi.dy.masa.servux.network.packet.StructureDataPacketHandler;
 import fi.dy.masa.servux.util.PlayerDimensionPosition;
 import fi.dy.masa.servux.util.Timeout;
@@ -56,8 +57,8 @@ public class StructureDataProvider extends DataProviderBase
         return true;
     }
 
-    @Override
-    public IPluginChannelHandler getPacketHandler()
+
+    public StructureDataPacketHandler getPacketHandler()
     {
         return StructureDataPacketHandler.INSTANCE;
     }
@@ -112,7 +113,10 @@ public class StructureDataProvider extends DataProviderBase
 
         if (this.registeredPlayers.containsKey(uuid) == false)
         {
-            PacketSplitter.sendPacketTypeAndCompound(StructureDataPacketHandler.CHANNEL, StructureDataPacketHandler.PACKET_S2C_METADATA, this.metadata, player);
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeVarInt(StructureDataPacketHandler.PACKET_S2C_METADATA);
+            buf.writeNbt(this.metadata);
+            ServerPlayNetworking.send(player, StructureDataPacketHandler.CHANNEL, buf);
 
             this.registeredPlayers.put(uuid, new PlayerDimensionPosition(player));
             int tickCounter = player.getServer().getTicks();
@@ -387,7 +391,10 @@ public class StructureDataProvider extends DataProviderBase
             NbtCompound tag = new NbtCompound();
             tag.put("Structures", structureList);
 
-            PacketSplitter.sendPacketTypeAndCompound(StructureDataPacketHandler.CHANNEL, StructureDataPacketHandler.PACKET_S2C_STRUCTURE_DATA, tag, player);
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeVarInt(StructureDataPacketHandler.PACKET_S2C_STRUCTURE_DATA);
+            buf.writeNbt(tag);
+            ServerPlayNetworking.send(player, StructureDataPacketHandler.CHANNEL, buf);
         }
     }
 

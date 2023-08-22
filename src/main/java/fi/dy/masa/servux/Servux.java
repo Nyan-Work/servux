@@ -1,5 +1,6 @@
 package fi.dy.masa.servux;
 
+import fi.dy.masa.servux.network.ServerPacketChannelHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import fi.dy.masa.servux.dataproviders.DataProviderManager;

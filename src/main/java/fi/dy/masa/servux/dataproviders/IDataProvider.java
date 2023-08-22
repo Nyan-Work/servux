@@ -2,7 +2,6 @@ package fi.dy.masa.servux.dataproviders;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
-import fi.dy.masa.servux.network.IPluginChannelHandler;
 
 public interface IDataProvider
 {
@@ -73,10 +72,4 @@ public interface IDataProvider
     default void tick(MinecraftServer server, int tickCounter)
     {
     }
-
-    /**
-     * Returns the network packet handler used for this data provider.
-     * @return
-     */
-    IPluginChannelHandler getPacketHandler();
 }

@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import net.minecraft.server.MinecraftServer;
-import fi.dy.masa.servux.network.IPluginChannelHandler;
 import fi.dy.masa.servux.network.ServerPacketChannelHandler;
 import fi.dy.masa.servux.util.JsonUtils;
 
@@ -101,15 +100,13 @@ public class DataProviderManager
 
     protected void updatePacketHandlerRegistration(IDataProvider provider)
     {
-        IPluginChannelHandler handler = provider.getPacketHandler();
-
         if (provider.isEnabled())
         {
-            ServerPacketChannelHandler.INSTANCE.registerServerChannelHandler(handler);
+            ServerPacketChannelHandler.INSTANCE.registerServerChannelHandler();
         }
         else
         {
-            ServerPacketChannelHandler.INSTANCE.unregisterServerChannelHandler(handler);
+            ServerPacketChannelHandler.INSTANCE.unregisterServerChannelHandler();
         }
     }
 
